@@ -1,0 +1,26 @@
+# Environments & Secrets
+.env
+*.env
+**/.env
+
+# Dependencies & Virtualenvs
+venv/
+**/venv/
+node_modules/
+**/node_modules/
+
+# Python cache & artifacts
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.db
+*.sqlite3
+
+# Build output
+dist/
+**/dist/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

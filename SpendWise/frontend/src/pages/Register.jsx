@@ -42,7 +42,7 @@ export default function Register() {
     <AuthShell
       title="Create your account"
       subtitle="Start tracking your finances in minutes"
-      footer={<>Already have an account? <Link className="font-medium text-indigo-600" to="/login">Sign in</Link></>}
+      footer={<>Already have an account? <Link className="font-medium text-emerald-600" to="/login">Sign in</Link></>}
     >
       <form onSubmit={submit} className="space-y-4" noValidate>
         <ErrorBanner message={apiError} />

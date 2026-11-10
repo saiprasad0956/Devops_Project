@@ -69,7 +69,7 @@ export default function Analytics() {
               <ResponsiveContainer><LineChart data={m}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="label" tick={{ fontSize: 12 }} /><YAxis width={50} tick={{ fontSize: 12 }} /><Tooltip formatter={(v) => money(v)} /><Legend />
                 <Line type="monotone" dataKey="income" name="Income" stroke={INCOME_COLOR} strokeWidth={2} />
                 <Line type="monotone" dataKey="expense" name="Expense" stroke={EXPENSE_COLOR} strokeWidth={2} />
-                <Line type="monotone" dataKey="savings" name="Net savings" stroke="#4f46e5" strokeWidth={2} strokeDasharray="5 5" /></LineChart></ResponsiveContainer>
+                <Line type="monotone" dataKey="savings" name="Net savings" stroke="#0f766e" strokeWidth={2} strokeDasharray="5 5" /></LineChart></ResponsiveContainer>
             </Box>
             <div className="card p-5">
               <div className="mb-4 flex items-center justify-between">

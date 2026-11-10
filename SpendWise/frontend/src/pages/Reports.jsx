@@ -73,7 +73,7 @@ export default function Reports() {
           <div className="mb-4 grid gap-4 sm:grid-cols-3">
             <StatCard title="Total income" value={money(income)} tone="green" sub={`${rows.length} transactions`} />
             <StatCard title="Total expenses" value={money(expense)} tone="red" />
-            <StatCard title="Net" value={money(income - expense)} tone="indigo" />
+            <StatCard title="Net" value={money(income - expense)} tone="green" />
           </div>
           <div className="card overflow-hidden">
             {rows.length === 0 ? <EmptyState icon={FileText} title="No transactions found" text="Try a wider date range." /> : (

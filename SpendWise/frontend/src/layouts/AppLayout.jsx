@@ -15,7 +15,7 @@ const links = [
 function Logo() {
   return (
     <div className="flex items-center gap-2 px-2">
-      <div className="rounded-lg bg-indigo-600 p-1.5 text-white"><TrendingUp className="h-5 w-5" /></div>
+      <div className="rounded-lg bg-emerald-600 p-1.5 text-white"><TrendingUp className="h-5 w-5" /></div>
       <span className="text-lg font-bold tracking-tight text-slate-900">SpendWise</span>
     </div>
   );
@@ -42,7 +42,7 @@ export default function AppLayout() {
             onClick={() => setOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                isActive ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-100"
+                isActive ? "bg-emerald-50 text-emerald-700" : "text-slate-600 hover:bg-slate-100"
               }`
             }
           >
@@ -52,7 +52,7 @@ export default function AppLayout() {
       </nav>
       <div className="border-t border-slate-200 pt-4">
         <div className="mb-3 flex items-center gap-3 px-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-semibold text-emerald-700">
             {user?.full_name?.[0]?.toUpperCase()}
           </div>
           <div className="min-w-0">

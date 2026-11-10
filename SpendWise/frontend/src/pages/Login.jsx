@@ -38,7 +38,7 @@ export default function Login() {
     <AuthShell
       title="Welcome back"
       subtitle="Sign in to your SpendWise account"
-      footer={<>Don't have an account? <Link className="font-medium text-indigo-600" to="/register">Sign up</Link></>}
+      footer={<>Don't have an account? <Link className="font-medium text-emerald-600" to="/register">Sign up</Link></>}
     >
       <form onSubmit={submit} className="space-y-4" noValidate>
         <ErrorBanner message={apiError} />

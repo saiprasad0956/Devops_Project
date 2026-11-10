@@ -61,7 +61,7 @@ export default function Profile() {
       <div className="grid gap-4 lg:grid-cols-2">
         <form onSubmit={saveInfo} className="card space-y-4 p-5" noValidate>
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-xl font-bold text-indigo-700">{user.full_name[0].toUpperCase()}</div>
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-xl font-bold text-emerald-700">{user.full_name[0].toUpperCase()}</div>
             <div><p className="font-semibold">{user.full_name}</p><p className="text-sm text-slate-500">Member since {new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p></div>
           </div>
           <ErrorBanner message={infoMsg.error} /><Ok message={infoMsg.ok} />

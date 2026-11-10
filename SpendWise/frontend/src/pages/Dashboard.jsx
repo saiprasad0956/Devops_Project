@@ -26,7 +26,7 @@ export default function Dashboard() {
       <PageHeader title="Dashboard" subtitle="Your financial overview" />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard title="Total Balance" value={money(d.total_balance)} icon={Wallet} tone="indigo" sub="All-time income minus expenses" />
+        <StatCard title="Total Balance" value={money(d.total_balance)} icon={Wallet} tone="green" sub="All-time income minus expenses" />
         <StatCard title="Total Income" value={money(d.total_income)} icon={ArrowUpCircle} tone="green" sub={`${money(d.month_income)} this month`} />
         <StatCard title="Total Expenses" value={money(d.total_expenses)} icon={ArrowDownCircle} tone="red" sub={`${money(d.month_expenses)} this month`} />
       </div>
@@ -34,7 +34,7 @@ export default function Dashboard() {
       <div className="card mt-4 p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-semibold">Budget utilization (this month)</h2>
-          <Link to="/budgets" className="text-sm font-medium text-indigo-600">Manage budgets</Link>
+          <Link to="/budgets" className="text-sm font-medium text-emerald-600">Manage budgets</Link>
         </div>
         {d.monthly_budget > 0 ? (
           <>
@@ -102,7 +102,7 @@ export default function Dashboard() {
       <div className="card mt-4">
         <div className="flex items-center justify-between p-5 pb-2">
           <h2 className="font-semibold">Recent transactions</h2>
-          <Link to="/transactions" className="text-sm font-medium text-indigo-600">View all</Link>
+          <Link to="/transactions" className="text-sm font-medium text-emerald-600">View all</Link>
         </div>
         {d.recent_transactions.length ? (
           <ul className="divide-y divide-slate-100">

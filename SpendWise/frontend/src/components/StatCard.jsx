@@ -1,6 +1,5 @@
-export default function StatCard({ title, value, icon: Icon, tone = "indigo", sub }) {
+export default function StatCard({ title, value, icon: Icon, tone = "green", sub }) {
   const tones = {
-    indigo: "bg-indigo-50 text-indigo-600",
     green: "bg-emerald-50 text-emerald-600",
     red: "bg-red-50 text-red-600",
     amber: "bg-amber-50 text-amber-600",

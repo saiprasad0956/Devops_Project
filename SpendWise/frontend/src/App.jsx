@@ -9,10 +9,12 @@ import Budgets from "./pages/Budgets.jsx";
 import Analytics from "./pages/Analytics.jsx";
 import Reports from "./pages/Reports.jsx";
 import Profile from "./pages/Profile.jsx";
+import Landing from "./pages/Landing.jsx";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route element={<ProtectedRoute />}>

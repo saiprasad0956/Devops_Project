@@ -2,20 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+:root { --green: #0bb984; --green-dark: #07966c; --ink: #172033; --muted: #64748b; }
+
 @layer base {
   html { scroll-behavior: smooth; }
-  body { @apply bg-slate-50 text-slate-800 antialiased; font-family: "Inter", system-ui, sans-serif; }
+  body { @apply text-slate-800 antialiased; font-family: "Inter", system-ui, sans-serif; background: #f6faf8; }
+  :focus-visible { outline: 2px solid #0bb984; outline-offset: 2px; }
 }
 
+/* Shared building blocks. These follow the landing page: same green, ink, radii and soft green-tinted shadows. */
 @layer components {
-  .card { @apply bg-white rounded-2xl border border-slate-200 shadow-sm; }
-  .input { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200; }
-  .input-error { @apply border-red-400 focus:border-red-500 focus:ring-red-200; }
-  .label { @apply block text-sm font-medium text-slate-700 mb-1; }
-  .field-error { @apply mt-1 text-xs text-red-600; }
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed; }
-  .btn-primary { @apply btn bg-emerald-600 text-white hover:bg-emerald-700; }
-  .btn-secondary { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50; }
+  .card { @apply bg-white border; border-color: #e9eeeb; border-radius: 16px; box-shadow: 0 1px 2px rgb(23 32 51 / 4%), 0 4px 14px rgb(29 76 57 / 3%); }
+  .input { @apply w-full bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none; border: 1px solid #dbe3e0; border-radius: 11px; transition: border-color .2s ease, box-shadow .2s ease; }
+  .input:hover { border-color: #c4d3cd; }
+  .input:focus { border-color: #0bb984; box-shadow: 0 0 0 4px rgb(11 185 132 / 14%); }
+  .input-error { border-color: #f87171; }
+  .input-error:focus { border-color: #ef4444; box-shadow: 0 0 0 4px rgb(239 68 68 / 12%); }
+  .label { @apply block text-sm text-slate-700 mb-1.5; font-weight: 600; }
+  .field-error { @apply mt-1.5 text-xs text-red-600; }
+  .btn { @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed; border-radius: 11px; font-weight: 650; transition: background .2s ease, transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+  .btn-primary { @apply btn text-white; background: #0bb984; box-shadow: 0 6px 16px rgb(11 185 132 / 17%); }
+  .btn-primary:hover:not(:disabled) { background: #07966c; transform: translateY(-1px); box-shadow: 0 10px 24px rgb(11 185 132 / 23%); }
+  .btn-secondary { @apply btn bg-white text-slate-700; border: 1px solid #dbe3e0; }
+  .btn-secondary:hover:not(:disabled) { background: #f6faf8; border-color: #b7efd9; color: #07966c; }
   .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
 }
 
@@ -175,3 +184,63 @@
 @media (prefers-reduced-motion: reduce) {
   .landing-page *, .landing-page *::before, .landing-page *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* ---------- App shell (sidebar + top bar) ---------- */
+.app-sidebar { background: #fff; border-right: 1px solid #edf1f3; }
+.app-nav-link { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 11px; color: #536174; font-size: 14px; font-weight: 550; transition: background .2s ease, color .2s ease; }
+.app-nav-link:hover { background: #f3f8f6; color: #172033; }
+.app-nav-link.is-active { background: #e9f9f2; color: #07966c; font-weight: 650; }
+.app-nav-link.is-active::before { content: ""; position: absolute; left: -16px; top: 9px; bottom: 9px; width: 4px; border-radius: 0 4px 4px 0; background: #0bb984; }
+.app-topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; padding: 0 32px; border-bottom: 1px solid #edf1f3; background: rgb(255 255 255 / 90%); backdrop-filter: blur(14px); }
+.app-avatar { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: 50%; background: #e9f9f2; color: #07966c; font-size: 14px; font-weight: 700; border: 1px solid #cfeee0; }
+.app-main { background: radial-gradient(ellipse at 85% -10%, #e8faf4 0%, rgb(246 250 248 / 0%) 45%); }
+.app-main h1 { color: #172033; letter-spacing: -.04em; }
+.app-main h2 { color: #172033; letter-spacing: -.02em; font-weight: 700; }
+.app-main table thead { background: #f6faf8; color: #718096; font-size: 12px; text-transform: none; }
+.app-main table thead th { font-weight: 650; border-bottom: 1px solid #edf1ee; }
+.app-main table tbody tr { transition: background .15s ease; }
+.app-main table tbody tr:hover { background: #f9fcfb; }
+.app-main .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #eef2f0; }
+.stat-icon { display: grid; place-items: center; width: 41px; height: 41px; border-radius: 12px; }
+
+/* Charts */
+.recharts-cartesian-grid line { stroke: #e8eeeb; }
+.recharts-text { fill: #718096; }
+.recharts-legend-item-text { color: #536174 !important; font-size: 13px; }
+.recharts-default-tooltip { border: 1px solid #e9eeeb !important; border-radius: 12px !important; box-shadow: 0 12px 32px rgb(29 76 57 / 10%) !important; padding: 10px 14px !important; }
+.recharts-tooltip-cursor { fill: rgb(11 185 132 / 6%); }
+
+/* ---------- Login / register ---------- */
+.auth-page { min-height: 100vh; display: flex; flex-direction: column; background: radial-gradient(ellipse at 72% 44%, #e8faf4 0%, #f5fcf9 29%, transparent 64%), linear-gradient(110deg, #fff 40%, #f8fdfb); }
+.auth-header { width: min(1240px, calc(100% - 48px)); height: 74px; margin: auto; display: flex; align-items: center; justify-content: space-between; }
+.auth-back { display: inline-flex; align-items: center; gap: 6px; color: #536174; font-size: 14px; font-weight: 550; }
+.auth-back:hover { color: #07966c; }
+.auth-body { flex: 1; width: min(1240px, calc(100% - 48px)); margin: auto; display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 72px; padding: 24px 0 64px; }
+.auth-copy { max-width: 560px; }
+.auth-copy h2 { margin: 22px 0 16px; color: #172033; font-size: clamp(34px, 4vw, 52px); font-weight: 750; letter-spacing: -.055em; line-height: 1.07; }
+.auth-copy h2 span { color: #0bb984; }
+.auth-copy > p { max-width: 480px; color: #526176; font-size: 16px; line-height: 1.7; }
+.auth-points { display: grid; gap: 14px; margin-top: 32px; }
+.auth-point { display: flex; align-items: center; gap: 14px; }
+.auth-point-icon { display: grid; place-items: center; flex: none; width: 41px; height: 41px; border-radius: 12px; background: #e9f9f2; color: #07966c; }
+.auth-point strong { display: block; color: #253044; font-size: 14px; font-weight: 700; }
+.auth-point small { display: block; margin-top: 2px; color: #778496; font-size: 12.5px; }
+.auth-card-wrap { position: relative; width: 100%; max-width: 440px; justify-self: center; }
+.auth-card-wrap::before { content: ""; position: absolute; inset: -4% -7% -5% 6%; border: 1px solid #d7f0e7; border-radius: 40px; background: linear-gradient(145deg, #ecfaf5, #f7fcfa); transform: rotate(3deg); }
+.auth-card { position: relative; padding: 36px; border: 1px solid #e6eaed; border-radius: 21px; background: #fff; box-shadow: 0 28px 75px rgb(25 50 42 / 12%), 0 4px 14px rgb(25 50 42 / 5%); }
+.auth-card h1 { color: #172033; font-size: 26px; font-weight: 750; letter-spacing: -.04em; }
+.auth-card-sub { margin: 6px 0 26px; color: #718096; font-size: 14px; }
+.auth-footer-text { margin-top: 24px; text-align: center; color: #718096; font-size: 14px; }
+.auth-trust { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #eef2f0; color: #8a96a4; font-size: 12px; }
+.auth-trust svg { color: #07966c; }
+@media (max-width: 960px) {
+  .auth-body { grid-template-columns: 1fr; gap: 0; padding-top: 8px; }
+  .auth-copy { display: none; }
+  .auth-card-wrap::before { display: none; }
+}
+@media (max-width: 480px) {
+  .auth-header, .auth-body { width: calc(100% - 32px); }
+  .auth-card { padding: 26px 22px; }
+}
+.app-main button[aria-label="Edit"], .app-main button[aria-label="Delete"] { border-radius: 9px; transition: background .15s ease, color .15s ease; }
+.app-main button[aria-label="Edit"]:hover { color: #07966c; background: #e9f9f2; }

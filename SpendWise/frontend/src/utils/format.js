@@ -1,6 +1,6 @@
 export const CURRENCY = "USD"; // change to "INR", "EUR", "GBP"... if you like
-export const INCOME_COLOR = "#10b981";
-export const EXPENSE_COLOR = "#ef4444";
+export const INCOME_COLOR = "#0bb984";
+export const EXPENSE_COLOR = "#f58b82";
 export const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 export const money = (n) =>

@@ -1,27 +1,48 @@
-import { TrendingUp } from "lucide-react";
+import { ArrowLeft, BarChart3, LockKeyhole, PieChart, ReceiptText, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const points = [
+  { icon: ReceiptText, title: "Record every transaction", text: "Income and expenses, searchable by date and category." },
+  { icon: PieChart, title: "Stay within your budgets", text: "Monthly limits with clear progress and alerts." },
+  { icon: BarChart3, title: "See where your money goes", text: "Charts and reports you can export as CSV." },
+];
 
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="flex min-h-screen">
-      <div className="hidden flex-1 flex-col justify-between bg-gradient-to-br from-emerald-600 to-teal-700 p-12 text-white lg:flex">
-        <div className="flex items-center gap-2 text-xl font-bold"><TrendingUp /> SpendWise</div>
-        <div>
-          <h2 className="text-4xl font-bold leading-tight">Take control of your money.</h2>
-          <p className="mt-4 max-w-md text-emerald-100">
-            Track income and expenses, set monthly budgets and understand where your money goes, all in one dashboard.
-          </p>
+    <div className="auth-page">
+      <header className="auth-header">
+        <Link to="/" className="landing-logo">
+          <span className="landing-logo-mark"><TrendingUp size={20} /></span>
+          SpendWise
+        </Link>
+        <Link to="/" className="auth-back"><ArrowLeft size={15} /> Back to home</Link>
+      </header>
+
+      <main className="auth-body">
+        <section className="auth-copy">
+          <span className="landing-eyebrow"><span />A clearer view of your finances</span>
+          <h2>Make sense of your money, <span>one day at a time.</span></h2>
+          <p>Track income and expenses, plan monthly budgets and see your spending patterns, all in one simple place.</p>
+          <div className="auth-points">
+            {points.map(({ icon: Icon, title: t, text }) => (
+              <div className="auth-point" key={t}>
+                <span className="auth-point-icon"><Icon size={19} /></span>
+                <div><strong>{t}</strong><small>{text}</small></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div className="auth-card-wrap">
+          <div className="auth-card">
+            <h1>{title}</h1>
+            <p className="auth-card-sub">{subtitle}</p>
+            {children}
+            <p className="auth-footer-text">{footer}</p>
+            <p className="auth-trust"><LockKeyhole size={13} /> Your financial records stay private to your account</p>
+          </div>
         </div>
-        <p className="text-sm text-emerald-100">Smart Personal Expense Tracker</p>
-      </div>
-      <div className="flex flex-1 items-center justify-center p-6">
-        <div className="w-full max-w-sm">
-          <div className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900 lg:hidden"><TrendingUp className="text-emerald-600" /> SpendWise</div>
-          <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
-          <p className="mb-6 mt-1 text-sm text-slate-500">{subtitle}</p>
-          {children}
-          <p className="mt-6 text-center text-sm text-slate-500">{footer}</p>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }

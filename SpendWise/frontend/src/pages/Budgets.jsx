@@ -75,7 +75,7 @@ export default function Budgets() {
               <div key={b.id} className="card p-5">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full" style={{ backgroundColor: b.category?.color || "#059669" }} />
+                    <span className="h-3 w-3 rounded-full" style={{ backgroundColor: b.category?.color || "#07966c" }} />
                     <h3 className="font-semibold">{name(b)}</h3>
                   </div>
                   <div className="flex">

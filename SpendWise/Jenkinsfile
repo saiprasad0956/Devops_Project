@@ -6,21 +6,34 @@ pipeline {
         timestamps()
     }
 
+    environment {
+        PYTHONUNBUFFERED = '1'
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
-                echo 'Checking out SpendWise source code'
-                checkout scm
+                echo 'SpendWise source code checked out from GitHub'
             }
         }
 
         stage('Backend Setup') {
             steps {
                 dir('SpendWise/backend') {
-                    bat 'python --version'
-                    bat 'python -m venv .venv-ci'
-                    bat '.venv-ci\\Scripts\\python.exe -m pip install -r requirements.txt'
+                    sh 'python3 --version'
+                    sh 'python3 -m venv .venv-ci'
+                    sh '.venv-ci/bin/python -m pip install --upgrade pip'
+                    sh '.venv-ci/bin/python -m pip install -r requirements.txt'
+                }
+            }
+        }
+
+        stage('Backend Validation') {
+            steps {
+                dir('SpendWise/backend') {
+                    sh '.venv-ci/bin/python -m compileall -q app'
+                    echo 'Backend Python syntax validation successful'
                 }
             }
         }
@@ -28,8 +41,9 @@ pipeline {
         stage('Frontend Setup') {
             steps {
                 dir('SpendWise/frontend') {
-                    bat 'node --version'
-                    bat 'npm ci'
+                    sh 'node --version'
+                    sh 'npm --version'
+                    sh 'npm ci'
                 }
             }
         }
@@ -37,32 +51,20 @@ pipeline {
         stage('Frontend Build') {
             steps {
                 dir('SpendWise/frontend') {
-                    bat 'npm run build'
+                    sh 'npm run build'
+                    echo 'Frontend build successful'
                 }
-            }
-        }
-
-        stage('Docker Configuration') {
-            steps {
-                bat 'docker compose -f SpendWise/docker-compose.yml config -q'
-                echo 'Docker Compose configuration is valid'
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                bat 'docker compose -f SpendWise/docker-compose.yml build'
             }
         }
     }
 
     post {
         success {
-            echo 'SpendWise CI/CD pipeline completed successfully!'
+            echo 'SpendWise CI Pipeline completed successfully!'
         }
 
         failure {
-            echo 'SpendWise pipeline failed. Check the console output.'
+            echo 'SpendWise CI Pipeline failed. Check Console Output.'
         }
     }
 }

@@ -4,6 +4,8 @@ pipeline {
 
     options {
         timestamps()
+        skipDefaultCheckout(true)
+        disableConcurrentBuilds()
     }
 
     environment {
@@ -11,9 +13,9 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
+                checkout scm
                 echo 'SpendWise source code checked out from GitHub'
             }
         }
@@ -56,23 +58,58 @@ pipeline {
                 }
             }
         }
-    }
+
         stage('Docker Image Build') {
             steps {
                 dir('SpendWise') {
-                    sh 'docker compose config -q'
-                    sh 'docker compose build backend frontend'
-                    echo 'Docker images built successfully'
+                    withCredentials([file(credentialsId: 'SpendWise-env', variable: 'SPENDWISE_ENV_FILE')]) {
+                        sh 'docker compose --env-file "$SPENDWISE_ENV_FILE" config --quiet'
+                        sh 'docker compose --env-file "$SPENDWISE_ENV_FILE" build backend frontend'
+                        echo 'Docker images built successfully'
+                    }
                 }
             }
         }
+stage('Deploy SpendWise') {
+    steps {
+        dir('SpendWise') {
+            sh 'docker compose up -d --no-build'
+            sh 'docker compose ps'
+            echo 'SpendWise deployment completed successfully!'
+        }
+    }
+}
+
+        stage('Deploy') {
+            steps {
+                dir('SpendWise') {
+                    withCredentials([file(credentialsId: 'SpendWise-env', variable: 'SPENDWISE_ENV_FILE')]) {
+                        sh '''
+                            set -eu
+                            docker compose --env-file "$SPENDWISE_ENV_FILE" config --quiet
+                            docker compose --env-file "$SPENDWISE_ENV_FILE" up --detach --no-build --wait --wait-timeout 180
+                            docker compose --env-file "$SPENDWISE_ENV_FILE" ps
+                        '''
+                    }
+                }
+            }
+            post {
+                success {
+                    echo 'SpendWise deployment succeeded; db, backend, and frontend are ready.'
+                }
+                failure {
+                    echo 'SpendWise deployment failed. Existing PostgreSQL volume was not removed; check Console Output.'
+                }
+            }
+        }
+    }
+
     post {
         success {
-            echo 'SpendWise CI Pipeline completed successfully!'
+            echo 'SpendWise CI/CD pipeline completed successfully.'
         }
-
         failure {
-            echo 'SpendWise CI Pipeline failed. Check Console Output.'
+            echo 'SpendWise CI/CD pipeline failed. Deployment runs only after validation and image build succeed.'
         }
     }
 }

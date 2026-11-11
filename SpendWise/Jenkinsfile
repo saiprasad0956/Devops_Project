@@ -57,7 +57,15 @@ pipeline {
             }
         }
     }
-
+        stage('Docker Image Build') {
+            steps {
+                dir('SpendWise') {
+                    sh 'docker compose config -q'
+                    sh 'docker compose build backend frontend'
+                    echo 'Docker images built successfully'
+                }
+            }
+        }
     post {
         success {
             echo 'SpendWise CI Pipeline completed successfully!'

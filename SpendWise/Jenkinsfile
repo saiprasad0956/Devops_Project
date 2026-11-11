@@ -1,0 +1,68 @@
+
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out SpendWise source code'
+                checkout scm
+            }
+        }
+
+        stage('Backend Setup') {
+            steps {
+                dir('SpendWise/backend') {
+                    bat 'python --version'
+                    bat 'python -m venv .venv-ci'
+                    bat '.venv-ci\\Scripts\\python.exe -m pip install -r requirements.txt'
+                }
+            }
+        }
+
+        stage('Frontend Setup') {
+            steps {
+                dir('SpendWise/frontend') {
+                    bat 'node --version'
+                    bat 'npm ci'
+                }
+            }
+        }
+
+        stage('Frontend Build') {
+            steps {
+                dir('SpendWise/frontend') {
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        stage('Docker Configuration') {
+            steps {
+                bat 'docker compose -f SpendWise/docker-compose.yml config -q'
+                echo 'Docker Compose configuration is valid'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                bat 'docker compose -f SpendWise/docker-compose.yml build'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SpendWise CI/CD pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'SpendWise pipeline failed. Check the console output.'
+        }
+    }
+}

@@ -1,54 +1,99 @@
-# SpendWise – Smart Personal Expense Tracker
+# SpendWise - Smart Personal Expense Tracker
 
-React + Vite + Tailwind frontend · FastAPI backend · PostgreSQL database.
+SpendWise is a personal finance application with a React, Vite, and Tailwind CSS frontend, a FastAPI backend, and PostgreSQL. Docker Compose runs the database, API, and web frontend as separate services.
 
-## 1. Prerequisites
-Node.js 20+, Python 3.11+, PostgreSQL 16+. Check with `node -v`, `python --version`, `psql --version`.
+## Architecture
 
-## 2. Create the database (once)
-```bash
-psql -U postgres
-```
-```sql
-CREATE DATABASE spendwise;
-\q
-```
+- **Frontend:** React and Vite, served by Nginx in the Docker deployment.
+- **Backend:** FastAPI and SQLAlchemy; the API creates its tables on startup.
+- **Database:** PostgreSQL 16, persisted in the named `postgres_data` Docker volume.
+- **CI/CD:** Jenkins validates the backend and builds the frontend, then builds and deploys the application images with Docker Compose.
 
-## 3. Run the backend (Terminal 1)
-Open a terminal in `SpendWise/backend`.
+## Prerequisites
 
-**Mac/Linux**
+For local development, install Node.js 20+, Python 3.11+, and PostgreSQL 16+. For the container deployment, install Docker Engine or Docker Desktop with the Docker Compose v2 plugin. Check versions with `node --version`, `python --version`, `psql --version`, and `docker compose version`.
+
+The Jenkins pipeline needs a Linux agent with Python 3, Node.js/npm, Docker CLI, Docker Compose v2, and access to the Docker daemon.
+
+## Local development
+
+### Backend
+
+Create a PostgreSQL database named `spendwise`, then open a terminal in `SpendWise/backend`.
+
+**macOS/Linux**
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
 ```
-**Windows (PowerShell)**
+
+**Windows PowerShell**
 ```powershell
 python -m venv venv
 venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-copy .env.example .env
+Copy-Item .env.example .env
 ```
-Edit `.env`: put your real postgres password in `DATABASE_URL` and set `SECRET_KEY`
-(generate: `python -c "import secrets; print(secrets.token_hex(32))"`).
 
-Start the server:
+Set the database URL and a strong `SECRET_KEY` in `backend/.env`. Generate a key with `python -c "import secrets; print(secrets.token_hex(32))"`. Start the API:
+
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
-Tables are created automatically on first start. API docs: http://localhost:8000/docs
-(click **Authorize** and paste the token from `/auth/login` to try protected endpoints).
 
-## 4. Run the frontend (Terminal 2)
-Open a second terminal in `SpendWise/frontend`:
+API docs: http://localhost:8000/docs. Use **Authorize** and a token from `/auth/login` to try protected endpoints.
+
+### Frontend
+
+In another terminal, open `SpendWise/frontend`:
+
 ```bash
 npm install
-cp .env.example .env      # Windows: copy .env.example .env
 npm run dev
 ```
-Open http://localhost:5173, register an account and start adding data.
+
+The development frontend is at http://localhost:5173.
+
+## Docker Compose deployment
+
+The Compose stack needs `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `SECRET_KEY`. Start from the placeholder template and replace every `replace-with-...` value with your own. The database password should be URL-safe because it is included in `DATABASE_URL`. Never commit the completed environment file.
+
+For local deployment, run the following from the `SpendWise` directory. The copy step preserves an existing environment file; edit the new copy with your local values before starting the stack.
+
+**Windows PowerShell**
+```powershell
+$envFile = "$env:USERPROFILE\SpendWise-jenkins.env"
+if (-not (Test-Path $envFile)) { Copy-Item .env.example $envFile }
+# Edit $envFile, then run:
+docker compose --env-file "$envFile" config --quiet
+docker compose --env-file "$envFile" up --detach --build --wait --wait-timeout 180
+docker compose --env-file "$envFile" ps
+```
+
+**macOS/Linux**
+```bash
+env_file="$HOME/SpendWise-jenkins.env"
+if [ ! -e "$env_file" ]; then cp .env.example "$env_file"; fi
+# Edit "$env_file", then run:
+docker compose --env-file "$env_file" config --quiet
+docker compose --env-file "$env_file" up --detach --build --wait --wait-timeout 180
+docker compose --env-file "$env_file" ps
+```
+
+The web app is at http://localhost, and the API docs are at http://localhost:8000/docs. The named `postgres_data` volume preserves database contents across deployments. Do not use `docker compose down -v`; it deletes the database volume.
+
+## Jenkins CI/CD
+
+1. Configure the `SpendWise-Pipeline` job to build the `main` branch and use `SpendWise/Jenkinsfile` as its script path.
+2. Add a Jenkins **Secret file** credential with ID `SpendWise-env`. Its file must define `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `SECRET_KEY`. Keep actual values only in Jenkins credentials or a local, ignored env file.
+3. Ensure the job's Linux agent has the prerequisites listed above and Docker daemon access.
+4. Run the job. The pipeline checks out the repository, sets up and validates the backend, installs and builds the frontend, validates the Compose configuration with the secret file, builds the backend/frontend images, then starts the Compose services and waits for their health checks.
+
+The root `jenkins/Dockerfile` provides a Jenkins image with Docker Compose v2 installed. Build it from the repository root with `docker build -t spendwise-jenkins:latest ./jenkins`.
+
+The current Jenkinsfile has two deployment stages (`Deploy SpendWise` and `Deploy`) that run the Compose deployment commands. Both have been left unchanged to preserve the existing pipeline.
 
 ## Features
 - Register / login (JWT, bcrypt hashed passwords), logout, profile update, change password
@@ -62,14 +107,16 @@ Open http://localhost:5173, register an account and start adding data.
 
 ## Project structure
 ```
-backend/app/  routes/ models/ schemas/ services/ core/ database/ main.py
-frontend/src/ components/ pages/ layouts/ services/ hooks/ context/ utils/ App.jsx
+backend/app/       FastAPI routes, models, schemas, services, and database setup
+frontend/src/      React components, pages, hooks, and API services
+docker-compose.yml PostgreSQL, backend, and frontend services
+Jenkinsfile        Jenkins CI/CD pipeline
 ```
 
 ## Troubleshooting
 | Problem | Fix |
 |---|---|
-| `password authentication failed` | Wrong password in `backend/.env` `DATABASE_URL` (URL-encode special characters, e.g. `@` → `%40`) |
+| `password authentication failed` | Check the local `DATABASE_URL` or Compose env file. For Compose, use a URL-safe `POSTGRES_PASSWORD`. |
 | `database "spendwise" does not exist` | Run the `CREATE DATABASE` step |
 | Frontend: "Cannot reach the server" | Backend not running on port 8000 |
 | CORS error in browser | Add your frontend URL to `CORS_ORIGINS` in `backend/.env`, restart backend |

@@ -70,15 +70,19 @@ pipeline {
                 }
             }
         }
-stage('Deploy SpendWise') {
-    steps {
-        dir('SpendWise') {
-            sh 'docker compose up -d --no-build'
-            sh 'docker compose ps'
-            echo 'SpendWise deployment completed successfully!'
+        stage('Deploy SpendWise') {
+            steps {
+                dir('SpendWise') {
+                    withCredentials([file(credentialsId: 'SpendWise-env', variable: 'SPENDWISE_ENV_FILE')]) {
+                        sh '''
+                            docker compose --env-file "$SPENDWISE_ENV_FILE" config --quiet
+                            docker compose --env-file "$SPENDWISE_ENV_FILE" up --detach --no-build --wait --wait-timeout 180
+                            docker compose --env-file "$SPENDWISE_ENV_FILE" ps
+                        '''
+                    }
+                }
+            }
         }
-    }
-}
 
         stage('Deploy') {
             steps {
